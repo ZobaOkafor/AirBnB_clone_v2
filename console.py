@@ -116,13 +116,11 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
-        kw = {}
         try:
             if not args:
                 raise SyntaxError()
             arg_list = args.split(" ")
-            current_time = datetime.utcnow().isoformat()
-            kw = {'created_at': current_time, 'updated_at': current_time}
+            kw = {}
             for arg in arg_list[1:]:
                 arg_splited = arg.split("=")
                 arg_splited[1] = eval(arg_splited[1])
