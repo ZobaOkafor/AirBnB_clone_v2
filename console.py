@@ -2,6 +2,7 @@
 """ Console Module """
 import cmd
 import sys
+from datetime import datetime
 from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
@@ -115,11 +116,13 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
+        kw = {}
         try:
             if not args:
                 raise SyntaxError()
             arg_list = args.split(" ")
-            kw = {}
+            current_time = datetime.utcnow().isoformat()
+            kw = {'created_at': current_time, 'updated_at': current_time}
             for arg in arg_list[1:]:
                 arg_splited = arg.split("=")
                 arg_splited[1] = eval(arg_splited[1])
