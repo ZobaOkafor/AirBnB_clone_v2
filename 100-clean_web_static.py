@@ -1,33 +1,30 @@
 #!/usr/bin/python3
-"""
-Fabric script that deletes out-of-date archives using the function do_clean.
-"""
+# Fabfile to delete out-of-date archives.
+import os
+from fabric.api import *
 
-from fabric.api import env, local, run
-from os.path import exists
-
-env.hosts = ['54.152.235.22', '35.175.64.89']
-env.user = 'ubuntu'
-env.key_filename = '~/.ssh/id_rsa'
+env.hosts = ["104.196.168.90", "35.196.46.172"]
 
 
 def do_clean(number=0):
+    """Delete out-of-date archives.
+
+    Args:
+        number (int): The number of archives to keep.
+
+    If number is 0 or 1, keeps only the most recent archive. If
+    number is 2, keeps the most and second-most recent archives,
+    etc.
     """
-    Function to delete out-of-date archives
-    """
-    try:
-        number = int(number)
-        if number < 1:
-            number = 1
+    number = 1 if int(number) == 0 else int(number)
 
-        # Delete out-of-date archives in versions folder
-        local("ls -1t versions | tail -n +{} | xargs -I {{}} rm versions/{{}}"
-              .format(number + 1))
+    archives = sorted(os.listdir("versions"))
+    [archives.pop() for i in range(number)]
+    with lcd("versions"):
+        [local("rm ./{}".format(a)) for a in archives]
 
-        # Delete out-of-date archives in /data/web_static/releases folder
-        run("ls -1t /data/web_static/releases | tail -n +{} | xargs -I {{}} "
-            "rm -rf /data/web_static/releases/{{}}".format(number + 1))
-
-    except Exception as e:
-        print(e)
-        return False
+    with cd("/data/web_static/releases"):
+        archives = run("ls -tr").split()
+        archives = [a for a in archives if "web_static_" in a]
+        [archives.pop() for i in range(number)]
+        [run("rm -rf ./{}".format(a)) for a in archives]
