@@ -27,8 +27,8 @@ def do_deploy(archive_path):
 
         # Remote paths
         remote_tmp_path = "/tmp/"
-        remote_release_path = "/data/web_static/releases/{}/"
-        .format(directory_name)
+        remote_release_path = (
+                "/data/web_static/releases/{}/".format(directory_name))
 
         # Upload the archive to /tmp/ directory
         put(archive_path, remote_tmp_path)
