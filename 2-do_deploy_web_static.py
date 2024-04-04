@@ -1,40 +1,49 @@
 #!/usr/bin/python3
-""" Function that compress a folder """
+"""
+Fabric script that distributes an archive to your web servers,
+using the function do_deploy.
+"""
+
+from fabric.api import env, put, run
+from os.path import exists
 from datetime import datetime
-from fabric.api import *
-import shlex
-import os
 
-
-env.hosts = ['35.231.33.237', '34.74.155.163']
-env.user = "ubuntu"
+env.hosts = ['54.152.235.22', '35.175.64.89']
+env.user = 'ubuntu'
 
 
 def do_deploy(archive_path):
-    """ Deploys """
-    if not os.path.exists(archive_path):
+    """Distributes an archive to your web servers."""
+    if not exists(archive_path):
         return False
+
     try:
-        name = archive_path.replace('/', ' ')
-        name = shlex.split(name)
-        name = name[-1]
-
-        wname = name.replace('.', ' ')
-        wname = shlex.split(wname)
-        wname = wname[0]
-
-        releases_path = "/data/web_static/releases/{}/".format(wname)
-        tmp_path = "/tmp/{}".format(name)
-
+        # Upload the archive to /tmp/ directory
         put(archive_path, "/tmp/")
-        run("mkdir -p {}".format(releases_path))
-        run("tar -xzf {} -C {}".format(tmp_path, releases_path))
-        run("rm {}".format(tmp_path))
-        run("mv {}web_static/* {}".format(releases_path, releases_path))
-        run("rm -rf {}web_static".format(releases_path))
+
+        # Extract archive to /data/web_static/releases/
+        filename = archive_path.split('/')[-1]
+        foldername = "/data/web_static/releases/" + filename.split('.')[0]
+        run("mkdir -p {}".format(foldername))
+        run("tar -xzf /tmp/{} -C {}".format(filename, foldername))
+
+        # Delete the archive from the web server
+        run("rm /tmp/{}".format(filename))
+
+        # Move contents of extracted folder to its parent folder
+        run("mv {}/web_static/* {}".format(foldername, foldername))
+
+        # Remove extracted folder
+        run("rm -rf {}/web_static".format(foldername))
+
+        # Delete the symbolic link /data/web_static/current
         run("rm -rf /data/web_static/current")
-        run("ln -s {} /data/web_static/current".format(releases_path))
+
+        # Create a new symbolic link
+        run("ln -s {} /data/web_static/current".format(foldername))
+
         print("New version deployed!")
         return True
-    except:
+    except Exception as e:
+        print(e)
         return False
