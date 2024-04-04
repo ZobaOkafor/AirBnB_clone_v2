@@ -45,5 +45,3 @@ sudo sed -i "/server {/a $config_block" /etc/nginx/sites-available/default
 
 # Restart Nginx
 sudo service nginx restart
-
-exit 0
