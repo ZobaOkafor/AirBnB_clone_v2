@@ -40,8 +40,9 @@ def do_deploy(archive_path):
         directory_name = filename.split('.')[0]
 
         remote_tmp_path = "/tmp/"
-        remote_release_path = "/data/web_static/releases/{}/"
-        .format(directory_name)
+        remote_release_path = (
+                "/data/web_static/releases/{}/"
+                .format(directory_name))
 
         put(archive_path, remote_tmp_path)
         run("mkdir -p {}".format(remote_release_path))
