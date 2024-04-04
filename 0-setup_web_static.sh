@@ -26,6 +26,7 @@ sudo ln -s /data/web_static/releases/test/ /data/web_static/current
 
 # Set ownership
 sudo chown -R ubuntu:ubuntu /data/
+sudo chgrp -R ubuntu:ubuntu /data/
 
 # Update Nginx configuration
 config_block="
