@@ -3,13 +3,13 @@
 
 # Install Nginx if not already installed
 if ! command -v nginx &> /dev/null; then
-    sudo apt-get -y update
-    sudo apt-get -y install nginx
+    apt-get -y update
+    apt-get -y install nginx
 fi
 
 # Create necessary folders if they don't exist
-sudo mkdir -p /data/web_static/releases/test/
-sudo mkdir -p /data/web_static/shared/
+mkdir -p /data/web_static/releases/test/
+mkdir -p /data/web_static/shared/
 
 # Create fake HTML file
 echo "<html>
@@ -21,12 +21,12 @@ echo "<html>
 </html>" | sudo tee /data/web_static/releases/test/index.html > /dev/null
 
 # Create symbolic link
-sudo rm -rf /data/web_static/current
-sudo ln -s /data/web_static/releases/test/ /data/web_static/current
+rm -rf /data/web_static/current
+ln -s /data/web_static/releases/test/ /data/web_static/current
 
 # Set ownership
-sudo chown -R ubuntu:ubuntu /data/
-sudo chgrp -R ubuntu:ubuntu /data/
+chown -R ubuntu:ubuntu /data/
+chgrp -R ubuntu:ubuntu /data/
 
 # Update Nginx configuration
 config_block="
