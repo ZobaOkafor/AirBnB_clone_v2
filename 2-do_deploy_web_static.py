@@ -8,7 +8,7 @@ from fabric.api import env, put, run
 from os.path import exists
 from datetime import datetime
 
-env.hosts = ['<IP web-01>', '<IP web-02>']
+env.hosts = ['54.152.235.22', '35.175.64.89']
 env.user = 'ubuntu'
 
 
