@@ -3,48 +3,48 @@
 
 # Install Nginx if not already installed
 if ! command -v nginx &> /dev/null; then
-    apt-get -y update
-    apt-get -y install nginx
+    apt-get update
+    apt-get install -y nginx
 fi
 
-# Create necessary folders if they don't exist
+# Create necessary directories
 mkdir -p /data/web_static/releases/test/
 mkdir -p /data/web_static/shared/
 
 # Create fake HTML file
-echo "<html>
-  <head>
-  </head>
-  <body>
-    Holberton School
-  </body>
-</html>" | sudo tee /data/web_static/releases/test/index.html > /dev/null
+echo "Holberton School" > /data/web_static/releases/test/index.html
 
 # Create symbolic link
-rm -rf /data/web_static/current
-ln -s /data/web_static/releases/test/ /data/web_static/current
+ln -sf /data/web_static/releases/test/ /data/web_static/current
 
-# Set ownership
+# Set ownership and group
 chown -R ubuntu:ubuntu /data/
-chgrp -R ubuntu:ubuntu /data/
 
 # Update Nginx configuration
-config_block="
+cat > /etc/nginx/sites-available/default <<EOF
 server {
-    listen 80;
-    listen [::]:80;
-    server_name _;
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    add_header X-Served-By $HOSTNAME;
+    root   /var/www/html;
+    index  index.html index.htm;
 
     location /hbnb_static {
-        alias /data/web_static/current/;
-        index index.html;
+        alias /data/web_static/current;
+        index index.html index.htm;
+    }
+
+    location /redirect_me {
+        return 301 http://cuberule.com/;
+    }
+
+    error_page 404 /404.html;
+    location /404 {
+      root /var/www/html;
+      internal;
     }
 }
-"
-
-sudo sed -i "/server {/a $config_block" /etc/nginx/sites-available/default
+EOF
 
 # Restart Nginx
-sudo service nginx restart
-
-exit 0
+service nginx restart
