@@ -23,24 +23,25 @@ def do_deploy(archive_path):
 
         # Extract archive to /data/web_static/releases/
         filename = archive_path.split('/')[-1]
-        foldername = "/data/web_static/releases/" + filename.split('.')[0]
-        run("mkdir -p {}".format(foldername))
-        run("tar -xzf /tmp/{} -C {}".format(filename, foldername))
+        foldername = filename.split('.')[0]
+        full_path = "/data/web_static/releases/{}/".format(foldername)
+        run("mkdir -p {}".format(full_path))
+        run("tar -xzf /tmp/{} -C {}".format(filename, full_path))
 
         # Delete the archive from the web server
         run("rm /tmp/{}".format(filename))
 
         # Move contents of extracted folder to its parent folder
-        run("mv {}/web_static/* {}".format(foldername, foldername))
+        run("mv {}web_static/* {}".format(full_path, full_path))
 
         # Remove extracted folder
-        run("rm -rf {}/web_static".format(foldername))
+        run("rm -rf {}web_static".format(full_path))
 
         # Delete the symbolic link /data/web_static/current
         run("rm -rf /data/web_static/current")
 
         # Create a new symbolic link
-        run("ln -s {} /data/web_static/current".format(foldername))
+        run("ln -s {} /data/web_static/current".format(full_path))
 
         print("New version deployed!")
         return True
