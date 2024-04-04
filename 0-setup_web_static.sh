@@ -27,20 +27,30 @@ sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
 sudo chown -R ubuntu:ubuntu /data/
 
 # Update Nginx configuration
-config_block="
+cat > /etc/nginx/sites-available/default <<EOF
 server {
     listen 80;
     listen [::]:80;
-    server_name _;
+    add_header X-Served-By $HOSTNAME;
+    root   /var/www/html;
+    index  index.html index.htm;
 
     location /hbnb_static {
         alias /data/web_static/current/;
         index index.html;
     }
-}
-"
 
-sudo sed -i "/server {/a $config_block" /etc/nginx/sites-available/default
+    location /redirect_me {
+        return 301 http://cuberule.com/;
+    }
+
+    error_page 404 /404.html;
+    location /404 {
+      root /var/www/html;
+      internal;
+    }
+}
+EOF
 
 # Restart Nginx
 sudo service nginx restart
