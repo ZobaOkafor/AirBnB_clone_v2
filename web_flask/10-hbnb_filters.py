@@ -1,43 +1,24 @@
 #!/usr/bin/python3
 """
 Script that starts a Flask web application
+
+Routes:
+    /hbnb_filters: HBnB HTML filters page.
 """
 
 from flask import Flask, render_template
 from models import storage
-from models.state import State
-from models.city import City
-from models.amenity import Amenity
 
 app = Flask(__name__)
-
-
-def load_states():
-    """Load and sort all State objects"""
-    states = storage.all(State).values()
-    return sorted(states, key=lambda state: state.name)
-
-
-def load_cities():
-    """Load and sort all City objects"""
-    cities = storage.all(City).values()
-    return sorted(cities, key=lambda city: city.name)
-
-
-def load_amenities():
-    """Load and sort all Amenity objects"""
-    amenities = storage.all(Amenity).values()
-    return sorted(amenities, key=lambda amenity: amenity.name)
 
 
 @app.route('/hbnb_filters', strict_slashes=False)
 def hbnb_filters():
     """Display the HTML page with filters"""
-    states = load_states()
-    cities = load_cities()
-    amenities = load_amenities()
+    states = storage.all('State')
+    amenities = storage.all('Amenity')
     return render_template('10-hbnb_filters.html',
-                           states=states, cities=cities, amenities=amenities)
+                           states=states, amenities=amenities)
 
 
 @app.teardown_appcontext
