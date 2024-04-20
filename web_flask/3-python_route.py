@@ -10,7 +10,7 @@ Routes:
     the text variable (replace underscore _ symbols with a space).
     The default value of text is “is cool”.
 """
-from flask import Flask, escape
+from flask import Flask
 
 app = Flask(__name__)
 
@@ -30,14 +30,16 @@ def display_hbnb():
 @app.route('/c/<text>', strict_slashes=False)
 def display_c_text(text):
     """Display 'C' followed by the value of the text variable"""
-    return 'C {}'.format(escape(text).replace('_', ' '))
+    text.replace('_', ' ')
+    return 'C {}'.format(text)
 
 
 @app.route('/python/', defaults={'text': 'is cool'}, strict_slashes=False)
 @app.route('/python/<text>', strict_slashes=False)
 def display_python_text(text):
     """Display 'Python' followed by the value of the text variable"""
-    return 'Python {}'.format(escape(text).replace('_', ' '))
+    text.replace('_', ' ')
+    return 'Python {}'.format(text)
 
 
 if __name__ == '__main__':
