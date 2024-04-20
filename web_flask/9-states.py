@@ -1,6 +1,10 @@
 #!/usr/bin/python3
 """
 Script that starts a Flask web application
+
+Routes:
+    /states: HTML page with a list of all State objects.
+    /states/<id>: HTML page displaying the given state with <id>.
 """
 
 from flask import Flask, render_template
@@ -10,41 +14,21 @@ from models.state import State
 app = Flask(__name__)
 
 
-def generate_states_html():
-    """Generate HTML for states and their cities"""
-    states = storage.all(State).values()
-    states_sorted = sorted(states, key=lambda state: state.name)
-
-    states_html = []
-    for state in states_sorted:
-        state_info = {
-            "id": state.id,
-            "name": state.name,
-            "cities": []
-        }
-
-        if storage._DBStorage__objects == "db":
-            cities = sorted(state.cities, key=lambda city: city.name)
-        else:
-            cities = sorted(state.cities(), key=lambda city: city.name)
-
-        for city in cities:
-            city_info = {
-                "id": city.id,
-                "name": city.name
-            }
-            state_info["cities"].append(city_info)
-
-        states_html.append(state_info)
-
-    return states_html
+@app.route("/states", strict_slashes=False)
+def display_states():
+    """Displays an HTML page with a list of all States.
+    """
+    states = storage.all("State")
+    return render_template("9-states.html", state=states)
 
 
-@app.route('/cities_by_states', strict_slashes=False)
-def cities_by_states():
-    """Display a HTML page with the list of states and their cities"""
-    states_html = generate_states_html()
-    return render_template('cities_by_states.html', states=states_html)
+@app.route("/states/<id>", strict_slashes=False)
+def display_states_id(id):
+    """Displays an HTML page with info about <id>, if it exists."""
+    for state in storage.all("State").values():
+        if state.id == id:
+            return render_template("9-states.html", state=state)
+    return render_template("9-states.html")
 
 
 @app.teardown_appcontext
