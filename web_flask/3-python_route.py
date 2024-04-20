@@ -38,8 +38,8 @@ def display_c_text(text):
 @app.route('/python/<text>', strict_slashes=False)
 def display_python_text(text):
     """Display 'Python' followed by the value of the text variable"""
-    text = text.replace('_', ' ')
-    return 'Python {}'.format(text)
+    # text = text.replace('_', ' ')
+    return 'Python {}'.format(text.replace('_', ' '))
 
 
 if __name__ == '__main__':
