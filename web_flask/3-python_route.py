@@ -30,15 +30,13 @@ def display_hbnb():
 @app.route('/c/<text>', strict_slashes=False)
 def display_c_text(text):
     """Display 'C' followed by the value of the text variable"""
-    text = text.replace('_', ' ')
-    return 'C {}'.format(text)
+    return 'C {}'.format(text.replace('_', ' '))
 
 
 @app.route('/python/', defaults={'text': 'is cool'}, strict_slashes=False)
 @app.route('/python/<text>', strict_slashes=False)
 def display_python_text(text):
     """Display 'Python' followed by the value of the text variable"""
-    # text = text.replace('_', ' ')
     return 'Python {}'.format(text.replace('_', ' '))
 
 
