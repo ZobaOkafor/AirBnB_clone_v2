@@ -7,7 +7,7 @@ Routes:
     /c/<text>: display “C ” followed by the value of the text variable
         (replace underscore _ symbols with a space)
 """
-from flask import Flask, escape
+from flask import Flask
 
 app = Flask(__name__)
 
