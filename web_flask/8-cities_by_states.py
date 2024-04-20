@@ -17,7 +17,7 @@ app = Flask(__name__)
 @app.route('/cities_by_states', strict_slashes=False)
 def cities_by_states():
     """Display a HTML page with the list of states and their cities"""
-    states = storage.all('states')
+    states = storage.all('State')
     return render_template('8-cities_by_states.html', states=states)
 
 
